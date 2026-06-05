@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviewMe – Honest Reviews for Creatives</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#0f0e0c;--paper:#f5f0e8;--cream:#ede8dc;--red:#d63a2f;--red-dark:#a82b22;
+  --gold:#c8963e;--muted:#8a8070;--border:#d4cfc4;--surface:#faf7f2;
+  --ff-display:'Playfair Display',Georgia,serif;
+  --ff-mono:'IBM Plex Mono',monospace;
+  --ff-body:'Instrument Sans',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);font-family:var(--ff-body);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.4;}
+
+/* ─── NAV ─── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1.5px solid var(--border);position:sticky;top:0;z-index:200;background:rgba(245,240,232,0.94);backdrop-filter:blur(12px);}
+.nav-logo{font-family:var(--ff-display);font-size:1.5rem;font-weight:900;letter-spacing:-0.02em;cursor:pointer;}
+.nav-logo em{color:var(--red);font-style:italic;}
+.nav-links{display:flex;gap:6px;align-items:center;}
+.nav-btn{font-family:var(--ff-body);font-size:0.8rem;font-weight:600;padding:8px 18px;border-radius:4px;cursor:pointer;border:1.5px solid var(--ink);background:transparent;color:var(--ink);letter-spacing:0.04em;text-transform:uppercase;transition:all 0.2s;}
+.nav-btn:hover{background:var(--ink);color:var(--paper);}
+.nav-btn.primary{background:var(--red);color:white;border-color:var(--red);}
+.nav-btn.primary:hover{background:var(--red-dark);border-color:var(--red-dark);}
+/* Hamburger */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--ink);transition:all 0.3s;border-radius:2px;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-mobile{display:none;position:fixed;top:61px;left:0;right:0;background:var(--paper);border-bottom:1.5px solid var(--border);padding:16px 24px;flex-direction:column;gap:8px;z-index:199;}
+.nav-mobile.open{display:flex;}
+.nav-mobile .nav-btn{width:100%;text-align:center;}
+
+/* ─── HERO ─── */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:88vh;gap:0;}
+.hero-left{padding:80px 40px 80px 60px;display:flex;flex-direction:column;justify-content:center;border-right:1.5px solid var(--border);}
+.hero-eyebrow{font-family:var(--ff-mono);font-size:0.72rem;font-weight:500;color:var(--red);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:1.5px;background:var(--red);}
+.hero-h1{font-family:var(--ff-display);font-size:clamp(3rem,5vw,5rem);font-weight:900;line-height:1.0;letter-spacing:-0.03em;margin-bottom:28px;}
+.hero-h1 em{font-style:italic;color:var(--red);}
+.hero-desc{font-size:1.05rem;line-height:1.7;color:#3d3830;max-width:440px;margin-bottom:40px;}
+.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.btn-main{background:var(--red);color:white;border:none;padding:14px 32px;font-family:var(--ff-body);font-weight:600;font-size:0.9rem;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all 0.2s;box-shadow:4px 4px 0 var(--red-dark);}
+.btn-main:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--red-dark);}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--ink);padding:13px 28px;font-family:var(--ff-body);font-weight:600;font-size:0.9rem;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all 0.2s;}
+.btn-outline:hover{background:var(--ink);color:var(--paper);}
+.hero-stat{margin-top:56px;padding-top:28px;border-top:1px solid var(--border);display:flex;gap:40px;}
+.stat-num{font-family:var(--ff-display);font-size:2rem;font-weight:900;color:var(--red);}
+.stat-lbl{font-family:var(--ff-mono);font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
+.hero-right{padding:40px;background:var(--cream);display:flex;flex-direction:column;gap:16px;justify-content:center;overflow:hidden;}
+.feed-label{font-family:var(--ff-mono);font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;}
+.work-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px 20px;transition:transform 0.2s,box-shadow 0.2s;animation:cardFloat 0.6s ease both;}
+.work-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
+@keyframes cardFloat{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.work-card:nth-child(2){animation-delay:0.1s;}.work-card:nth-child(3){animation-delay:0.2s;}.work-card:nth-child(4){animation-delay:0.3s;}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.card-type{font-family:var(--ff-mono);font-size:0.65rem;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:2px;letter-spacing:0.08em;text-transform:uppercase;}
+.card-type.design{background:#2a6496;}.card-type.writing{background:#5a3e6b;}.card-type.music{background:#2e6b4f;}.card-type.film{background:#8b4513;}
+.card-reviews{font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);}
+.card-title{font-family:var(--ff-display);font-weight:700;font-size:1.05rem;margin-bottom:6px;}
+.card-excerpt{font-size:0.8rem;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.card-scores{display:flex;gap:10px;}
+.score-pill{font-family:var(--ff-mono);font-size:0.68rem;padding:3px 10px;border-radius:2px;border:1px solid var(--border);}
+.score-pill.high{border-color:#2e6b4f;color:#2e6b4f;background:rgba(46,107,79,0.06);}
+.score-pill.mid{border-color:var(--gold);color:var(--gold);background:rgba(200,150,62,0.06);}
+.score-pill.low{border-color:var(--red);color:var(--red);background:rgba(214,58,47,0.06);}
+
+/* ─── SECTIONS ─── */
+.section{padding:80px 60px;}.section-alt{background:var(--cream);}.section-dark{background:var(--ink);color:var(--paper);}
+.section-tag{font-family:var(--ff-mono);font-size:0.7rem;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-tag::before{content:'';display:block;width:20px;height:1.5px;background:var(--red);}
+.section-h2{font-family:var(--ff-display);font-size:clamp(2rem,3.5vw,3rem);font-weight:900;line-height:1.1;letter-spacing:-0.02em;margin-bottom:16px;}
+.section-sub{font-size:1rem;color:var(--muted);line-height:1.7;max-width:520px;margin-bottom:48px;}
+.section-dark .section-sub{color:#a09880;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.step{background:var(--surface);padding:36px 32px;}
+.step-num{font-family:var(--ff-display);font-size:3.5rem;font-weight:900;color:var(--border);line-height:1;margin-bottom:20px;}
+.step-title{font-family:var(--ff-display);font-weight:700;font-size:1.25rem;margin-bottom:10px;}
+.step-desc{font-size:0.88rem;color:var(--muted);line-height:1.7;}
+.cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.cred-card{border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:28px;background:rgba(255,255,255,0.03);}
+.cred-icon{font-size:1.8rem;margin-bottom:14px;}
+.cred-title{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+.cred-desc{font-size:0.85rem;color:#a09880;line-height:1.6;}
+
+/* ─── SUBMIT FORM ─── */
+.submit-wrap{max-width:700px;margin:0 auto;}
+.form-group{margin-bottom:24px;}
+.form-label{display:block;font-family:var(--ff-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:8px;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:4px;padding:12px 16px;font-family:var(--ff-body);font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--red);}
+.form-input.error{border-color:var(--red);background:rgba(214,58,47,0.04);}
+.form-error{font-family:var(--ff-mono);font-size:0.68rem;color:var(--red);margin-top:5px;display:none;}
+.form-error.show{display:block;}
+.form-textarea{min-height:120px;resize:vertical;}
+.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.type-btn{padding:12px 8px;text-align:center;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;transition:all 0.2s;background:var(--surface);font-family:var(--ff-body);font-size:0.8rem;font-weight:500;}
+.type-btn:hover,.type-btn.active{border-color:var(--red);background:rgba(214,58,47,0.06);color:var(--red);}
+.type-btn .t-icon{font-size:1.4rem;display:block;margin-bottom:6px;}
+.file-drop{border:2px dashed var(--border);border-radius:4px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface);}
+.file-drop:hover{border-color:var(--red);}
+.file-drop-icon{font-size:2rem;margin-bottom:8px;}
+.file-drop-text{font-size:0.85rem;color:var(--muted);}
+/* Submit success state */
+.submit-success{text-align:center;padding:60px 20px;display:none;}
+.submit-success.show{display:block;}
+.submit-success-icon{font-size:3rem;margin-bottom:16px;}
+.submit-success-title{font-family:var(--ff-display);font-size:1.8rem;font-weight:900;margin-bottom:10px;}
+.submit-success-sub{font-size:0.9rem;color:var(--muted);margin-bottom:28px;}
+
+/* ─── REVIEW WALL ─── */
+.review-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;}
+.review-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.1);}
+.review-card-header{padding:18px 20px 12px;border-bottom:1px solid var(--border);}
+.review-card-title{font-family:var(--ff-display);font-weight:700;font-size:1.1rem;margin-bottom:4px;}
+.review-card-meta{display:flex;gap:8px;align-items:center;font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);}
+.review-card-body{padding:16px 20px;}
+.review-snippet{font-size:0.85rem;line-height:1.65;color:#3d3830;margin-bottom:14px;}
+.review-scores-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.score-tag{font-family:var(--ff-mono);font-size:0.65rem;padding:4px 10px;border-radius:2px;border:1px solid var(--border);}
+.review-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.cred-badge{background:var(--ink);color:var(--paper);padding:2px 7px;border-radius:2px;font-size:0.62rem;letter-spacing:0.06em;font-family:var(--ff-mono);}
+.cred-badge.gold{background:var(--gold);}
+.cred-badge.silver{background:#7a8fa6;}
+.helpful-btn{font-family:var(--ff-mono);font-size:0.68rem;background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;cursor:pointer;color:var(--muted);transition:all 0.2s;}
+.helpful-btn:hover{border-color:var(--ink);color:var(--ink);}
+.helpful-btn.voted{border-color:#2e6b4f;color:#2e6b4f;}
+
+/* ─── AI FEEDBACK ─── */
+.ai-feedback-block{margin:0;border-top:1px solid var(--border);background:linear-gradient(135deg,rgba(15,14,12,0.03) 0%,rgba(214,58,47,0.04) 100%);}
+.ai-feedback-header{display:flex;align-items:center;gap:10px;padding:12px 20px 10px;}
+.ai-badge{font-family:var(--ff-mono);font-size:0.6rem;font-weight:500;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:2px;letter-spacing:0.1em;display:flex;align-items:center;gap:5px;}
+.ai-badge::before{content:'◈';font-size:0.7rem;color:var(--red);}
+.ai-feedback-meta{font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);}
+.ai-feedback-body{padding:0 20px 16px;}
+.ai-critique{font-size:0.83rem;line-height:1.7;color:#3d3830;margin-bottom:12px;}
+.ai-scores{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.ai-score-pill{font-family:var(--ff-mono);font-size:0.65rem;padding:3px 10px;border-radius:2px;background:rgba(15,14,12,0.06);border:1px solid rgba(15,14,12,0.15);color:var(--ink);}
+.ai-strength-weak{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.ai-sw-box{font-size:0.78rem;padding:8px 12px;border-radius:3px;line-height:1.5;}
+.ai-sw-box.strength{background:rgba(46,107,79,0.07);border:1px solid rgba(46,107,79,0.2);}
+.ai-sw-box.weakness{background:rgba(214,58,47,0.06);border:1px solid rgba(214,58,47,0.18);}
+.ai-sw-label{font-family:var(--ff-mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;color:var(--muted);}
+.ai-btn{font-family:var(--ff-mono);font-size:0.65rem;background:var(--ink);color:var(--paper);border:none;border-radius:2px;padding:4px 10px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px;}
+.ai-btn::before{content:'◈';color:var(--red);}
+.ai-btn:hover{background:var(--red);}
+.ai-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.ai-loading{padding:12px 20px 16px;font-family:var(--ff-mono);font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.ai-loading::before{content:'◈';color:var(--red);animation:aiPulse 1s ease-in-out infinite;}
+@keyframes aiPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.8);}}
+
+/* ─── WORK DETAIL MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,14,12,0.78);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--paper);border:1.5px solid var(--border);border-radius:8px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;transform:translateY(24px);transition:transform 0.3s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-header{padding:24px 28px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.modal-title{font-family:var(--ff-display);font-weight:700;font-size:1.4rem;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);line-height:1;padding:4px;}
+.modal-body{padding:24px 28px 28px;}
+
+/* Detail modal review list */
+.detail-meta{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+.detail-review-item{border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px;background:var(--surface);}
+.detail-review-text{font-size:0.88rem;line-height:1.7;color:#3d3830;margin-bottom:12px;}
+.detail-review-sw{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.detail-sw-box{font-size:0.78rem;padding:7px 11px;border-radius:3px;line-height:1.5;}
+.detail-sw-box.s{background:rgba(46,107,79,0.07);border:1px solid rgba(46,107,79,0.2);}
+.detail-sw-box.w{background:rgba(214,58,47,0.06);border:1px solid rgba(214,58,47,0.18);}
+.detail-sw-label{font-family:var(--ff-mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:2px;}
+.detail-review-footer{display:flex;justify-content:space-between;align-items:center;}
+.detail-scores{display:flex;gap:6px;flex-wrap:wrap;}
+.detail-score-tag{font-family:var(--ff-mono);font-size:0.63rem;padding:3px 8px;border-radius:2px;border:1px solid var(--border);color:var(--muted);}
+.helpful-vote-btn{font-family:var(--ff-mono);font-size:0.65rem;background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;cursor:pointer;color:var(--muted);transition:all 0.2s;display:flex;align-items:center;gap:5px;}
+.helpful-vote-btn:hover{border-color:#2e6b4f;color:#2e6b4f;}
+.helpful-vote-btn.voted{border-color:#2e6b4f;color:#2e6b4f;background:rgba(46,107,79,0.06);}
+.no-reviews-yet{text-align:center;padding:32px;color:var(--muted);font-family:var(--ff-mono);font-size:0.8rem;}
+
+/* ─── REVIEW WRITE MODAL ─── */
+.rating-row{display:flex;gap:8px;margin-bottom:18px;}
+.rating-criterion{flex:1;text-align:center;}
+.rating-criterion label{font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:6px;}
+.star-row{display:flex;gap:2px;justify-content:center;}
+.star{font-size:1rem;cursor:pointer;transition:transform 0.1s;color:var(--border);}
+.star.lit{color:var(--gold);}
+.star:hover{transform:scale(1.2);}
+
+/* ─── TABS ─── */
+.tab-row{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:32px;}
+.tab{padding:12px 24px;cursor:pointer;font-family:var(--ff-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all 0.2s;}
+.tab.active{color:var(--red);border-bottom-color:var(--red);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ─── LEADERBOARD EMPTY ─── */
+.leaderboard-empty{text-align:center;padding:60px 20px;color:var(--muted);font-family:var(--ff-mono);font-size:0.8rem;border:1px solid var(--border);border-radius:6px;}
+.leaderboard-empty-icon{font-size:2.5rem;margin-bottom:12px;}
+
+/* ─── FOOTER ─── */
+footer{background:var(--ink);color:var(--paper);padding:48px 60px 32px;}
+.footer-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand .nav-logo{color:var(--paper);font-size:1.3rem;}
+.footer-tagline{font-size:0.85rem;color:#a09880;line-height:1.6;margin-top:10px;max-width:220px;}
+.footer-col-title{font-family:var(--ff-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:14px;}
+.footer-links{display:flex;flex-direction:column;gap:8px;}
+.footer-link{font-size:0.85rem;color:#c8c0b0;cursor:pointer;transition:color 0.2s;}
+.footer-link:hover{color:var(--red);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);}
+
+/* ─── TOAST ─── */
+#toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);padding:12px 24px;border-radius:4px;font-family:var(--ff-mono);font-size:0.8rem;z-index:9000;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ─── MISC ─── */
+.divider{border:none;border-top:1px solid var(--border);margin:0;}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;}
+.tag{font-family:var(--ff-mono);font-size:0.7rem;padding:4px 12px;border:1px solid var(--border);border-radius:2px;cursor:pointer;color:var(--muted);transition:all 0.2s;}
+.tag:hover,.tag.active{border-color:var(--red);color:var(--red);background:rgba(214,58,47,0.05);}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);font-family:var(--ff-mono);font-size:0.8rem;}
+
+/* ─── MOBILE ─── */
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;}
+  .hero-right{display:none;}
+  .hero-left{padding:60px 24px;}
+  nav{padding:16px 24px;}
+  .nav-links{display:none;}
+  .nav-hamburger{display:flex;}
+  .section{padding:56px 24px;}
+  .steps{grid-template-columns:1fr;}
+  .cred-grid{grid-template-columns:1fr;}
+  .type-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-inner{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center;}
+  .review-wall{grid-template-columns:1fr;}
+  #app-section{padding:0 16px;}
+  .tab{padding:10px 14px;font-size:0.68rem;}
+  .ai-strength-weak{grid-template-columns:1fr;}
+  .detail-review-sw{grid-template-columns:1fr;}
+  .rating-row{flex-wrap:wrap;}
+  .rating-criterion{min-width:80px;}
+  .hero-stat{gap:24px;}
+  .modal{max-width:100%;border-radius:12px 12px 0 0;}
+  .modal-overlay{align-items:flex-end;padding:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="scrollToTop()">Review<em>Me</em></div>
+  <div class="nav-links">
+    <button class="nav-btn" onclick="showTab('browse')">Browse</button>
+    <button class="nav-btn" onclick="showTab('submit')">Submit Work</button>
+    <button class="nav-btn primary" onclick="openReviewModal()">Write a Review</button>
+  </div>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-mobile" id="mobile-nav">
+  <button class="nav-btn" onclick="showTab('browse');closeMobileNav()">Browse</button>
+  <button class="nav-btn" onclick="showTab('submit');closeMobileNav()">Submit Work</button>
+  <button class="nav-btn primary" onclick="openReviewModal();closeMobileNav()">Write a Review</button>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Honest feedback, zero filter</div>
+    <h1 class="hero-h1">Your work deserves the <em>truth.</em></h1>
+    <p class="hero-desc">ReviewMe is the anonymous review platform for creatives who are done with empty praise. Submit your work. Get brutal, honest, constructive feedback from a community that actually cares about craft.</p>
+    <div class="hero-cta">
+      <button class="btn-main" onclick="showTab('submit')">Submit Your Work</button>
+      <button class="btn-outline" onclick="showTab('browse')">Read Reviews</button>
+    </div>
+    <div class="hero-stat">
+      <div><div class="stat-num" id="stat-works">—</div><div class="stat-lbl">Works Submitted</div></div>
+      <div><div class="stat-num" id="stat-reviews">—</div><div class="stat-lbl">Reviews Written</div></div>
+      <div><div class="stat-num" id="stat-reviewers">—</div><div class="stat-lbl">Reviewers</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="feed-label">// Live submissions</div>
+    <div class="work-card">
+      <div class="card-top"><span class="card-type design">Design</span><span class="card-reviews">12 reviews</span></div>
+      <div class="card-title">Brand Identity for "Hollow Studio"</div>
+      <div class="card-excerpt">Minimalist logo system for a Berlin-based architecture firm. Seeking feedback on visual hierarchy.</div>
+      <div class="card-scores"><span class="score-pill high">Concept 8.2</span><span class="score-pill mid">Execution 6.5</span><span class="score-pill low">Originality 5.1</span></div>
+    </div>
+    <div class="work-card">
+      <div class="card-top"><span class="card-type writing">Writing</span><span class="card-reviews">7 reviews</span></div>
+      <div class="card-title">Short Story: "The Cartographer's Lie"</div>
+      <div class="card-excerpt">Literary fiction, ~3,200 words. First draft. Looking for honest critique on pacing and voice.</div>
+      <div class="card-scores"><span class="score-pill high">Voice 8.9</span><span class="score-pill mid">Pacing 6.0</span><span class="score-pill high">Hook 7.4</span></div>
+    </div>
+    <div class="work-card">
+      <div class="card-top"><span class="card-type music">Music</span><span class="card-reviews">4 reviews</span></div>
+      <div class="card-title">EP Track: "Ultraviolet Static"</div>
+      <div class="card-excerpt">Ambient electronic. SoundCloud link. Mix feedback and arrangement critique welcome.</div>
+      <div class="card-scores"><span class="score-pill mid">Mix 6.8</span><span class="score-pill high">Mood 8.1</span><span class="score-pill low">Structure 5.5</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MAIN APP TABS -->
+<div style="padding:0 40px;" id="app-section">
+  <div class="tab-row" style="margin-top:0;">
+    <div class="tab active" id="tab-browse" onclick="switchTab('browse')">Browse Works</div>
+    <div class="tab" id="tab-submit" onclick="switchTab('submit')">Submit Your Work</div>
+    <div class="tab" id="tab-leaderboard" onclick="switchTab('leaderboard')">Reviewer Board</div>
+  </div>
+
+  <!-- BROWSE TAB -->
+  <div class="tab-panel active" id="panel-browse">
+    <div class="tag-row" id="filter-tags">
+      <div class="tag active" onclick="filterWorks('all',this)">All</div>
+      <div class="tag" onclick="filterWorks('design',this)">Design</div>
+      <div class="tag" onclick="filterWorks('writing',this)">Writing</div>
+      <div class="tag" onclick="filterWorks('music',this)">Music</div>
+      <div class="tag" onclick="filterWorks('film',this)">Film / Photo</div>
+    </div>
+    <div class="review-wall" id="works-wall"></div>
+  </div>
+
+  <!-- SUBMIT TAB -->
+  <div class="tab-panel" id="panel-submit">
+    <!-- Form -->
+    <div class="submit-wrap" id="submit-form">
+      <div class="form-group">
+        <label class="form-label">Work Title</label>
+        <input class="form-input" id="sub-title" type="text" placeholder="Give your work a clear title..." />
+        <div class="form-error" id="err-title">Please add a title for your work.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Creative Category</label>
+        <div class="type-grid">
+          <div class="type-btn active" onclick="selectType(this,'design')"><span class="t-icon">🎨</span>Design / Art</div>
+          <div class="type-btn" onclick="selectType(this,'writing')"><span class="t-icon">✍️</span>Writing</div>
+          <div class="type-btn" onclick="selectType(this,'music')"><span class="t-icon">🎵</span>Music</div>
+          <div class="type-btn" onclick="selectType(this,'film')"><span class="t-icon">🎬</span>Film / Photo</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Share Your Work</label>
+        <input class="form-input" id="sub-link" type="url" placeholder="Paste a link (Behance, SoundCloud, YouTube, portfolio...)" style="margin-bottom:10px;" />
+        <div class="form-error" id="err-link">Please enter a valid URL (starting with http:// or https://).</div>
+        <div class="file-drop" onclick="showToast('File upload coming soon — paste a link for now!')">
+          <div class="file-drop-icon">📎</div>
+          <div class="file-drop-text">Or drag & drop an image / PDF / text file here</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What would you like feedback on?</label>
+        <textarea class="form-textarea" id="sub-context" placeholder="Be specific. E.g. 'Is the pacing off in the second act?' or 'Does the colour palette feel cohesive?'"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brief Description</label>
+        <textarea class="form-textarea" id="sub-desc" placeholder="Give reviewers context — what is this, what stage is it at?" style="min-height:90px;"></textarea>
+      </div>
+      <button class="btn-main" style="width:100%;" onclick="submitWork()">Submit for Review →</button>
+    </div>
+    <!-- Success State -->
+    <div class="submit-success" id="submit-success">
+      <div class="submit-success-icon">✅</div>
+      <div class="submit-success-title">Work submitted!</div>
+      <div class="submit-success-sub">Reviewers will find it shortly. The community will give you the honest feedback you need.</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-main" onclick="switchTab('browse')">See All Submissions</button>
+        <button class="btn-outline" onclick="resetSubmitForm()">Submit Another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD TAB -->
+  <div class="tab-panel" id="panel-leaderboard">
+    <div id="leaderboard-list"></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section section-alt" style="margin-top:60px;">
+  <div class="section-tag">Process</div>
+  <h2 class="section-h2">How ReviewMe works</h2>
+  <p class="section-sub">Three simple steps between you and the honest feedback that actually moves your craft forward.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">01</div><div class="step-title">Submit your work</div><div class="step-desc">Upload images, paste a link, or share a text excerpt. Tell reviewers what you want feedback on — no vague "just general thoughts."</div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-title">Strangers review anonymously</div><div class="step-desc">Real creatives from the community review your work with no identity attached. No followers, no social pressure — just honest craft critique.</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-title">Build credibility by reviewing</div><div class="step-desc">The more quality reviews you leave, the higher your credibility score. Better reviewers get more visibility. Honesty is rewarded here.</div></div>
+  </div>
+</section>
+
+<!-- CREDIBILITY -->
+<section class="section section-dark">
+  <div class="section-tag">Integrity System</div>
+  <h2 class="section-h2" style="color:var(--paper);">Why reviewers <em style="color:var(--red);font-family:var(--ff-display);">earn trust</em></h2>
+  <p class="section-sub">Anonymous doesn't mean unaccountable. Our credibility system separates thoughtful critics from drive-by comments.</p>
+  <div class="cred-grid">
+    <div class="cred-card"><div class="cred-icon">🎖️</div><div class="cred-title">Credibility Score</div><div class="cred-desc">Every reviewer earns a score based on helpfulness votes. High-cred reviewers are flagged so you know whose opinion to weigh most.</div></div>
+    <div class="cred-card"><div class="cred-icon">🗳️</div><div class="cred-title">Helpful / Not Helpful</div><div class="cred-desc">Submitters vote on every review they receive. Consistently unhelpful reviewers lose standing. The community self-moderates over time.</div></div>
+    <div class="cred-card"><div class="cred-icon">🔒</div><div class="cred-title">Full Anonymity</div><div class="cred-desc">Reviewer identities are never revealed to submitters. This is structurally enforced — not just a policy. You can't game it socially.</div></div>
+    <div class="cred-card"><div class="cred-icon">⚖️</div><div class="cred-title">Critique Guidelines</div><div class="cred-desc">Reviews must be specific, constructive, and respect the work's intent. Vague negativity gets flagged. This is brutal honesty, not cruelty.</div></div>
+  </div>
+</section>
+
+<!-- WORK DETAIL MODAL -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="detail-title"></div>
+        <div class="detail-meta" id="detail-meta"></div>
+      </div>
+      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- REVIEW WRITE MODAL -->
+<div class="modal-overlay" id="review-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Write an Anonymous Review</div>
+        <div style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--muted);margin-top:4px;">Your identity will never be revealed</div>
+      </div>
+      <button class="modal-close" onclick="closeReviewModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Select Work to Review</label>
+        <select class="form-select" id="review-work-select"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rate the Work</label>
+        <div class="rating-row" id="rating-row"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Honest Review</label>
+        <textarea class="form-textarea" id="review-text" placeholder="Be specific. What works? What doesn't? What would make it better? Back your opinions with reasoning." style="min-height:140px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What's the biggest strength?</label>
+        <input class="form-input" id="review-strength" type="text" placeholder="In one sentence..." />
+      </div>
+      <div class="form-group">
+        <label class="form-label">What's the most critical improvement needed?</label>
+        <input class="form-input" id="review-weakness" type="text" placeholder="Be direct but constructive..." />
+      </div>
+      <button class="btn-main" style="width:100%;" onclick="submitReview()">Submit Anonymous Review →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo">Review<em>Me</em></div>
+      <div class="footer-tagline">Honest feedback for creatives who are done with empty praise.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <div class="footer-links">
+        <span class="footer-link" onclick="showTab('browse')">Browse Works</span>
+        <span class="footer-link" onclick="showTab('submit')">Submit Work</span>
+        <span class="footer-link" onclick="openReviewModal()">Write a Review</span>
+        <span class="footer-link" onclick="showTab('leaderboard')">Reviewer Board</span>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Principles</div>
+      <div class="footer-links">
+        <span class="footer-link">Full Anonymity</span>
+        <span class="footer-link">Credibility System</span>
+        <span class="footer-link">Critique Guidelines</span>
+        <span class="footer-link">AI-Assisted Feedback</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 ReviewMe. Built for creatives who want the truth.</span>
+    <span style="color:var(--red);">◈ Honest by design.</span>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+// ─── STORAGE KEYS ───
+const STORAGE_WORKS     = 'reviewme-works';
+const STORAGE_REVIEWERS = 'reviewme-reviewers';
+
+// ─── SEED DATA ───
+const SEED_WORKS = [
+  { id:1, title:'Brand Identity for "Hollow Studio"', type:'design', link:'https://behance.net', desc:'Minimalist logo system for a Berlin-based architecture firm.', context:'Does the visual hierarchy feel right?', reviews:[
+    { text:'The logo mark is clean but the wordmark feels like a missed opportunity. The kerning on the "S" in "Studio" is inconsistent. Colour palette is safe — maybe too safe for an architecture firm trying to stand out.', strength:'Strong geometric discipline in the logomark.', weakness:'Wordmark needs kerning refinement and more personality.', scores:{Concept:8,Execution:6,Originality:5}, helpful:4, reviewer:'Anonymous #4471', badge:'gold', createdAt:Date.now()-3600000 }
+  ], aiFeedback:null, createdAt:Date.now()-86400000 },
+  { id:2, title:'Short Story: "The Cartographer\'s Lie"', type:'writing', link:'', desc:'Literary fiction, ~3,200 words. First draft exploring memory and cartography.', context:'Is the pacing off in the second act?', reviews:[
+    { text:'The voice is genuinely distinctive — rare in a first draft. But the second act sags badly around the 1,800-word mark. You introduce the cartographer\'s daughter and then abandon her. Either commit to that subplot or cut it entirely. The ending earns its emotion.', strength:'Distinctive, confident narrative voice throughout.', weakness:'Second act subplot introduced and abandoned — resolve it.', scores:{Voice:9,Pacing:5,Hook:7}, helpful:6, reviewer:'Anonymous #1882', badge:'silver', createdAt:Date.now()-7200000 }
+  ], aiFeedback:null, createdAt:Date.now()-43200000 },
+  { id:3, title:'EP Track: "Ultraviolet Static"', type:'music', link:'https://soundcloud.com', desc:'Ambient electronic track. Interested in mix and arrangement feedback.', context:'Does the arrangement hold for 6 minutes?', reviews:[], aiFeedback:null, createdAt:Date.now()-21600000 },
+  { id:4, title:'Photo Essay: Commuters at Blue Hour', type:'film', link:'https://vsco.co', desc:'Street photography series, 12 images, shot over 2 weeks in Tokyo.', context:'Does it read as a coherent series?', reviews:[], aiFeedback:null, createdAt:Date.now()-10800000 },
+];
+const SEED_REVIEWERS = [
+  { name:'Anonymous #4471', score:94, count:38, badge:'gold' },
+  { name:'Anonymous #1882', score:87, count:24, badge:'silver' },
+  { name:'Anonymous #7729', score:81, count:19, badge:'silver' },
+  { name:'Anonymous #3310', score:73, count:14, badge:'' },
+  { name:'Anonymous #5502', score:65, count:9,  badge:'' },
+];
+
+// ─── STATE ───
+let works = [], reviewers = [], selectedType = 'design', filterActive = 'all';
+const criteria = { design:['Concept','Execution','Originality'], writing:['Voice','Pacing','Hook'], music:['Mix','Mood','Structure'], film:['Composition','Story','Cohesion'] };
+const starRatings = {};
+
+// ─── PERSISTENCE ───
+async function saveData(key, value) {
+  try {
+    if(window.storage) await window.storage.set(key, JSON.stringify(value), true);
+    else localStorage.setItem(key, JSON.stringify(value));
+  } catch(e) { try { localStorage.setItem(key, JSON.stringify(value)); } catch(_){} }
+}
+async function loadData(key, fallback) {
+  try {
+    if(window.storage){ const r = await window.storage.get(key, true); if(r && r.value) return JSON.parse(r.value); }
+    else { const raw = localStorage.getItem(key); if(raw) return JSON.parse(raw); }
+  } catch(e) { try { const raw = localStorage.getItem(key); if(raw) return JSON.parse(raw); } catch(_){} }
+  return fallback;
+}
+function saveWorks()     { saveData(STORAGE_WORKS, works); }
+function saveReviewers() { saveData(STORAGE_REVIEWERS, reviewers); }
+
+// ─── STATS ───
+function updateStats() {
+  const totalReviews = works.reduce((a,w) => a + w.reviews.length, 0);
+  document.getElementById('stat-works').textContent     = works.length;
+  document.getElementById('stat-reviews').textContent   = totalReviews;
+  document.getElementById('stat-reviewers').textContent = reviewers.length;
+}
+
+// ─── NAV ───
+function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+function toggleMobileNav(){
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobile-nav').classList.toggle('open');
+}
+function closeMobileNav(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobile-nav').classList.remove('open');
+}
+
+// ─── TABS ───
+function showTab(name){
+  document.getElementById('app-section').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>switchTab(name), 300);
+}
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='browse')      renderWorks();
+  if(name==='leaderboard') renderLeaderboard();
+}
+
+// ─── WORKS WALL ───
+const typeColors = {design:'#2a6496',writing:'#5a3e6b',music:'#2e6b4f',film:'#8b4513'};
+const typeLabels = {design:'Design',writing:'Writing',music:'Music',film:'Film / Photo'};
+
+function filterWorks(type, el){
+  filterActive = type;
+  document.querySelectorAll('#filter-tags .tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderWorks();
+}
+
+function renderWorks(){
+  const wall = document.getElementById('works-wall');
+  const list = filterActive==='all' ? works : works.filter(w=>w.type===filterActive);
+  if(!list.length){ wall.innerHTML='<div class="empty">No works submitted yet in this category.<br><br><span style="cursor:pointer;color:var(--red);" onclick="showTab(\'submit\')">Be the first to submit →</span></div>'; return; }
+  wall.innerHTML = list.map(w=>{
+    const avgScore = w.reviews.length ? getAvgScore(w) : null;
+    const crit = criteria[w.type] || ['Overall'];
+    return `<div class="review-card" onclick="openWorkDetail(${w.id})">
+      <div class="review-card-header">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span class="card-type ${w.type}" style="background:${typeColors[w.type]}">${typeLabels[w.type]}</span>
+          <span style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);">${w.reviews.length} review${w.reviews.length!==1?'s':''}</span>
+        </div>
+        <div class="review-card-title">${w.title}</div>
+        <div class="review-card-meta">${timeAgo(w.createdAt)}</div>
+      </div>
+      <div class="review-card-body">
+        <div class="review-snippet">${w.desc || 'No description provided.'}</div>
+        ${w.context?`<div style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);margin-bottom:12px;">❓ ${w.context}</div>`:''}
+        <div class="review-scores-row">
+          ${avgScore ? crit.map(c=>`<span class="score-tag">${c} ${avgScore[c]||'—'}</span>`).join('') : '<span style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--muted);">No scores yet</span>'}
+        </div>
+        ${w.link?`<a href="${w.link}" target="_blank" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);" onclick="event.stopPropagation()">View Work ↗</a>`:''}
+      </div>
+      <div class="review-footer">
+        <span style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);">${w.reviews.length>0?'Latest: '+w.reviews[w.reviews.length-1].reviewer:'Be the first to review'}</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${!w.aiFeedback?`<button class="ai-btn" id="ai-btn-${w.id}" onclick="event.stopPropagation();requestAiFeedback(${w.id})">AI Feedback</button>`:''}
+          <button class="helpful-btn" onclick="event.stopPropagation();prepareReview(${w.id})">Review →</button>
+        </div>
+      </div>
+      ${w.aiFeedback ? renderAiFeedbackBlock(w.aiFeedback) : `<div id="ai-loading-${w.id}"></div>`}
+    </div>`;
+  }).join('');
+}
+
+function getAvgScore(w){
+  if(!w.reviews.length) return null;
+  const totals={}, counts={};
+  w.reviews.forEach(r=>{ Object.entries(r.scores||{}).forEach(([k,v])=>{ totals[k]=(totals[k]||0)+v; counts[k]=(counts[k]||0)+1; }); });
+  const avg={};
+  Object.keys(totals).forEach(k=>{ avg[k]=(totals[k]/counts[k]).toFixed(1); });
+  return avg;
+}
+
+// ─── WORK DETAIL MODAL ───
+function openWorkDetail(id){
+  const w = works.find(x=>x.id===id);
+  if(!w) return;
+  const crit = criteria[w.type] || ['Overall'];
+  const avgScore = w.reviews.length ? getAvgScore(w) : null;
+
+  document.getElementById('detail-title').textContent = w.title;
+  document.getElementById('detail-meta').innerHTML = `
+    <span class="card-type ${w.type}" style="background:${typeColors[w.type]}">${typeLabels[w.type]}</span>
+    <span style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--muted);">${timeAgo(w.createdAt)}</span>
+    ${w.link?`<a href="${w.link}" target="_blank" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);">View Work ↗</a>`:''}
+    ${avgScore ? crit.map(c=>`<span class="score-tag">${c} ${avgScore[c]}</span>`).join('') : ''}
+  `;
+
+  let body = '';
+  if(w.context) body += `<div style="font-family:var(--ff-mono);font-size:0.75rem;color:var(--red);margin-bottom:20px;padding:10px 14px;border:1px solid rgba(214,58,47,0.2);border-radius:4px;background:rgba(214,58,47,0.04);">❓ Creator's question: ${w.context}</div>`;
+
+  if(w.reviews.length === 0){
+    body += `<div class="no-reviews-yet">No human reviews yet.<br><br><span style="cursor:pointer;color:var(--red);" onclick="closeDetailModal();prepareReview(${w.id})">Be the first to review →</span></div>`;
+  } else {
+    body += w.reviews.map((r,i)=>`
+      <div class="detail-review-item">
+        <div class="detail-review-text">${r.text}</div>
+        ${(r.strength||r.weakness)?`<div class="detail-review-sw">
+          ${r.strength?`<div class="detail-sw-box s"><div class="detail-sw-label">✦ Strength</div>${r.strength}</div>`:''}
+          ${r.weakness?`<div class="detail-sw-box w"><div class="detail-sw-label">⚠ Needs Work</div>${r.weakness}</div>`:''}
+        </div>`:''}
+        <div class="detail-review-footer">
+          <div class="detail-scores">
+            ${Object.entries(r.scores||{}).map(([k,v])=>`<span class="detail-score-tag">${k} ${v}/10</span>`).join('')}
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);">${r.reviewer} ${r.badge?`<span class="cred-badge ${r.badge}">${r.badge==='gold'?'⭐ Expert':'✦ Trusted'}</span>`:''}</span>
+            <button class="helpful-vote-btn ${r.voted?'voted':''}" onclick="voteHelpful(${w.id},${i},this)">
+              👍 Helpful ${r.helpful>0?'('+r.helpful+')':''}
+            </button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  if(w.aiFeedback){
+    body += `<div style="margin-top:8px;">${renderAiFeedbackBlock(w.aiFeedback)}</div>`;
+  }
+
+  body += `<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;">
+    <button class="btn-main" style="flex:1;" onclick="closeDetailModal();prepareReview(${w.id})">Write a Review →</button>
+    ${!w.aiFeedback?`<button class="ai-btn" style="padding:10px 16px;" onclick="closeDetailModal();requestAiFeedback(${w.id})">◈ Get AI Feedback</button>`:''}
+  </div>`;
+
+  document.getElementById('detail-body').innerHTML = body;
+  document.getElementById('detail-modal').classList.add('open');
+}
+function closeDetailModal(){ document.getElementById('detail-modal').classList.remove('open'); }
+
+// ─── HELPFUL VOTING ───
+function voteHelpful(workId, reviewIdx, btn){
+  const w = works.find(x=>x.id===workId);
+  if(!w || !w.reviews[reviewIdx]) return;
+  const r = w.reviews[reviewIdx];
+  if(r.voted){ showToast('You already marked this review as helpful.'); return; }
+  r.helpful = (r.helpful||0) + 1;
+  r.voted = true;
+  // Bump reviewer's score in leaderboard
+  const rev = reviewers.find(x=>x.name===r.reviewer);
+  if(rev) rev.score = Math.min(100, rev.score + 2);
+  saveWorks();
+  saveReviewers();
+  btn.classList.add('voted');
+  btn.textContent = `👍 Helpful (${r.helpful})`;
+  showToast('✓ Marked as helpful — reviewer credibility increased.');
+}
+
+// ─── SUBMIT WORK ───
+function selectType(el, type){
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  selectedType = type;
+}
+
+function isValidUrl(str){
+  if(!str) return true; // optional field
+  try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
+  catch(_){ return false; }
+}
+
+function submitWork(){
+  const title   = document.getElementById('sub-title').value.trim();
+  const link    = document.getElementById('sub-link').value.trim();
+  const context = document.getElementById('sub-context').value.trim();
+  const desc    = document.getElementById('sub-desc').value.trim();
+
+  let valid = true;
+  // Title validation
+  const errTitle = document.getElementById('err-title');
+  const inputTitle = document.getElementById('sub-title');
+  if(!title){ errTitle.classList.add('show'); inputTitle.classList.add('error'); valid = false; }
+  else { errTitle.classList.remove('show'); inputTitle.classList.remove('error'); }
+  // URL validation
+  const errLink = document.getElementById('err-link');
+  const inputLink = document.getElementById('sub-link');
+  if(link && !isValidUrl(link)){ errLink.classList.add('show'); inputLink.classList.add('error'); valid = false; }
+  else { errLink.classList.remove('show'); inputLink.classList.remove('error'); }
+
+  if(!valid) return;
+
+  const w = { id:Date.now(), title, type:selectedType, link, desc, context, reviews:[], aiFeedback:null, createdAt:Date.now() };
+  works.unshift(w);
+  saveWorks();
+  updateStats();
+
+  // Show success state
+  document.getElementById('submit-form').style.display = 'none';
+  document.getElementById('submit-success').classList.add('show');
+}
+
+function resetSubmitForm(){
+  document.getElementById('sub-title').value='';
+  document.getElementById('sub-link').value='';
+  document.getElementById('sub-context').value='';
+  document.getElementById('sub-desc').value='';
+  document.getElementById('submit-form').style.display='block';
+  document.getElementById('submit-success').classList.remove('show');
+}
+
+// ─── REVIEW MODAL ───
+function openReviewModal(){
+  const sel = document.getElementById('review-work-select');
+  sel.innerHTML = '<option value="">Choose a submission...</option>' + works.map(w=>`<option value="${w.id}">${w.title}</option>`).join('');
+  sel.onchange = updateRatingCriteria;
+  updateRatingCriteria();
+  document.getElementById('review-modal').classList.add('open');
+}
+function closeReviewModal(){ document.getElementById('review-modal').classList.remove('open'); }
+
+function prepareReview(workId){
+  openReviewModal();
+  setTimeout(()=>{ document.getElementById('review-work-select').value=workId; updateRatingCriteria(); }, 100);
+}
+
+function updateRatingCriteria(){
+  const sel = document.getElementById('review-work-select');
+  const w = works.find(x=>x.id==sel.value);
+  const crit = w ? (criteria[w.type]||['Overall','Craft','Impact']) : ['Overall','Craft','Impact'];
+  document.getElementById('rating-row').innerHTML = crit.map(c=>`
+    <div class="rating-criterion">
+      <label>${c}</label>
+      <div class="star-row" id="stars-${c}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<span class="star" data-val="${n}" onclick="rateStar('${c}',${n})">★</span>`).join('')}</div>
+      <div style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);margin-top:3px;" id="score-${c}">—</div>
+    </div>`).join('');
+  crit.forEach(c=>{ starRatings[c]=0; });
+}
+
+function rateStar(crit, val){
+  starRatings[crit] = val;
+  document.querySelectorAll(`#stars-${crit} .star`).forEach(s=>{ s.classList.toggle('lit', parseInt(s.dataset.val)<=val); });
+  document.getElementById('score-'+crit).textContent = val+'/10';
+}
+
+function submitReview(){
+  const selVal   = document.getElementById('review-work-select').value;
+  const text     = document.getElementById('review-text').value.trim();
+  const strength = document.getElementById('review-strength').value.trim();
+  const weakness = document.getElementById('review-weakness').value.trim();
+  if(!selVal){ showToast('Please select a work to review.'); return; }
+  if(text.length < 40){ showToast('Please write a more detailed review (at least a few sentences).'); return; }
+  const w = works.find(x=>x.id==selVal);
+  if(!w) return;
+  const r = { text, strength, weakness, scores:{...starRatings}, helpful:0, voted:false, reviewer:'Anonymous #'+Math.floor(1000+Math.random()*8999), badge:'', createdAt:Date.now() };
+  w.reviews.push(r);
+  saveWorks();
+  reviewers.unshift({ name:r.reviewer, score:50, count:1, badge:'' });
+  saveReviewers();
+  updateStats();
+  closeReviewModal();
+  document.getElementById('review-text').value='';
+  document.getElementById('review-strength').value='';
+  document.getElementById('review-weakness').value='';
+  showToast('✓ Anonymous review submitted. Thank you for being honest.');
+  renderWorks();
+  if(w.reviews.length===1 && !w.aiFeedback){ setTimeout(()=>requestAiFeedback(w.id), 800); }
+}
+
+// ─── AI FEEDBACK ───
+function renderAiFeedbackBlock(ai){
+  const scoreHtml = Object.entries(ai.scores||{}).map(([k,v])=>`<span class="ai-score-pill">${k} ${v}/10</span>`).join('');
+  return `<div class="ai-feedback-block">
+    <div class="ai-feedback-header">
+      <span class="ai-badge">AI REVIEW</span>
+      <span class="ai-feedback-meta">Generated · Always public · Clearly labeled</span>
+    </div>
+    <div class="ai-feedback-body">
+      <div class="ai-critique">${ai.critique}</div>
+      <div class="ai-scores">${scoreHtml}</div>
+      <div class="ai-strength-weak">
+        <div class="ai-sw-box strength"><div class="ai-sw-label">✦ Strength</div>${ai.strength}</div>
+        <div class="ai-sw-box weakness"><div class="ai-sw-label">⚠ Needs Work</div>${ai.weakness}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function requestAiFeedback(workId){
+  const w = works.find(x=>x.id===workId);
+  if(!w) return;
+  const btn = document.getElementById(`ai-btn-${workId}`);
+  const loadingEl = document.getElementById(`ai-loading-${workId}`);
+  if(btn){ btn.disabled=true; btn.textContent='Generating...'; }
+  if(loadingEl) loadingEl.innerHTML=`<div class="ai-loading">Analysing your work — honest feedback incoming...</div>`;
+  const crit = criteria[w.type]||['Overall','Craft','Impact'];
+  const prompt = `You are ReviewMe's brutally honest AI critic. You give creatives the real feedback their friends won't.
+
+Work: "${w.title}"
+Category: ${w.type}
+Description: ${w.desc||'No description.'}
+Creator's question: ${w.context||'General feedback.'}
+${w.link?'Link: '+w.link:''}
+${w.reviews.length>0?'Human reviewers noted: '+w.reviews.map(r=>r.strength+'. '+r.weakness).join(' | '):''}
+
+Write an honest, constructive critique in 3-4 sentences. Be specific — no vague praise. Respond ONLY as valid JSON, no markdown:
+{"critique":"...","strength":"...","weakness":"...","scores":{${crit.map(c=>`"${c}":<1-10>`).join(',')}}}`;
+  try {
+    const res  = await fetch('https://api.anthropic.com/v1/messages',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] }) });
+    const data = await res.json();
+    const raw  = data.content?.find(b=>b.type==='text')?.text||'';
+    const ai   = JSON.parse(raw.replace(/```json|```/gi,'').trim());
+    w.aiFeedback = ai;
+    saveWorks();
+    renderWorks();
+    showToast('◈ AI feedback generated — scroll down to read it.');
+  } catch(err){
+    if(loadingEl) loadingEl.innerHTML='';
+    if(btn){ btn.disabled=false; btn.textContent='AI Feedback'; }
+    showToast('AI feedback failed — please try again.');
+  }
+}
+
+// ─── LEADERBOARD ───
+function renderLeaderboard(){
+  const el = document.getElementById('leaderboard-list');
+  if(!reviewers.length){
+    el.innerHTML=`<div class="leaderboard-empty"><div class="leaderboard-empty-icon">🏆</div>No reviewers yet. Be the first to write a review and claim the top spot.</div>`;
+    return;
+  }
+  el.innerHTML=`
+    <div style="margin-bottom:24px;"><p style="font-size:0.88rem;color:var(--muted);line-height:1.7;max-width:560px;">Credibility scores are earned through helpfulness votes. The higher your score, the more weight your reviews carry. Identity stays anonymous — even on this board.</p></div>
+    <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:48px 1fr 80px 80px 100px;padding:12px 20px;background:var(--cream);border-bottom:1px solid var(--border);font-family:var(--ff-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);">
+        <div>#</div><div>Reviewer</div><div>Reviews</div><div>Score</div><div>Status</div>
+      </div>
+      ${reviewers.sort((a,b)=>b.score-a.score).slice(0,10).map((r,i)=>`
+      <div style="display:grid;grid-template-columns:48px 1fr 80px 80px 100px;padding:14px 20px;border-bottom:1px solid var(--border);align-items:center;background:var(--surface);">
+        <div style="font-family:var(--ff-display);font-weight:900;font-size:1.1rem;color:var(--border);">${i+1}</div>
+        <div><div style="font-weight:500;font-size:0.88rem;">${r.name}</div><div style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);">${r.count} review${r.count!==1?'s':''}</div></div>
+        <div style="font-family:var(--ff-mono);font-size:0.8rem;">${r.count}</div>
+        <div style="font-family:var(--ff-display);font-weight:700;color:${r.score>=85?'#2e6b4f':r.score>=70?'var(--gold)':'var(--muted)'};">${r.score}</div>
+        <div><span class="cred-badge ${r.badge}">${r.badge==='gold'?'⭐ Expert':r.badge==='silver'?'✦ Trusted':'Reviewer'}</span></div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ─── UTILITIES ───
+function timeAgo(ts){
+  const d=Date.now()-ts;
+  if(d<3600000) return Math.floor(d/60000)+'m ago';
+  if(d<86400000) return Math.floor(d/3600000)+'h ago';
+  return Math.floor(d/86400000)+'d ago';
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function showLoading(){ document.getElementById('works-wall').innerHTML='<div class="empty" style="opacity:0.5;">Loading submissions...</div>'; }
+
+// ─── INIT ───
+async function init(){
+  showLoading();
+  works     = await loadData(STORAGE_WORKS,     SEED_WORKS);
+  reviewers = await loadData(STORAGE_REVIEWERS, SEED_REVIEWERS);
+  if(works===SEED_WORKS)         saveWorks();
+  if(reviewers===SEED_REVIEWERS) saveReviewers();
+  // Close modals on overlay click
+  document.getElementById('review-modal').addEventListener('click', function(e){ if(e.target===this) closeReviewModal(); });
+  document.getElementById('detail-modal').addEventListener('click', function(e){ if(e.target===this) closeDetailModal(); });
+  updateStats();
+  renderWorks();
+  updateRatingCriteria();
+}
+init();
+</script>
+</body>
+</html>
